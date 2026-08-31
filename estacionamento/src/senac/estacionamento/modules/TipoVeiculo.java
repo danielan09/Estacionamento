@@ -3,8 +3,8 @@ package senac.estacionamento.modules;
 
 public enum TipoVeiculo {
 
-    CARRO("Carro", 5.00, 2.00),
-    MOTO("Moto", 10.00, 3.00),
+    CARRO("Moto", 5.00, 2.00),
+    MOTO("Carro", 10.00, 3.00),
     CAMINHONETE("Caminhonete", 15.00, 5.00);
 
     private final String descricao;
@@ -25,14 +25,20 @@ public enum TipoVeiculo {
 
     public double calcularValor(long minutosPermanencia){
         if (minutosPermanencia <= 0) {
-            return valorPrimeiraHora;
+            return 0.0;
         }
-        if (minutosPermanencia <= 60) {
-            return valorPrimeiraHora;
-        }
-        long minutosExcedentes = minutosPermanencia - 60;
-        long horasAdicionais = (long) Math.ceil(minutosExcedentes/ 60.0);
 
-        return valorPrimeiraHora + (horasAdicionais * valorHoraAdicional);
+        if (minutosPermanencia >= 10 && minutosPermanencia <= 20) {
+            return 0.0;
+        }
+
+        long minutosCobrançados = Math.max(0, minutosPermanencia - 20);
+        long horasCobrançadas = (long) Math.ceil(minutosCobrançados / 60.0);
+
+        if (horasCobrançadas <= 0) {
+            return 0.0;
+        }
+
+        return valorPrimeiraHora * horasCobrançadas;
     }
 }
