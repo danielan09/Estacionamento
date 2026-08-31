@@ -57,13 +57,34 @@ public class Main {
 
     private static void cadastrarNovaVaga(LeitorConsole leitor, Estacionamento estacionamento) {
         int quantidade = leitor.lerInteiro("Quantidade de vagas a cadastrar: ");
+
+        if (quantidade <= 0) {
+            System.out.println("Quantidade inválida. Digite um valor maior que zero.");
+            return;
+        }
+
+        if (estacionamento.getTotalVagas() + quantidade > 50) {
+            System.out.println("Limite máximo de vagas excedido. O estacionamento aceita até 50 vagas.");
+            return;
+        }
+
         estacionamento.cadastrarVagas(quantidade);
         System.out.println("Vagas cadastradas com sucesso!");
     }
 
     private static void registrarEntrada(LeitorConsole leitor, Estacionamento estacionamento) {
         String placa = leitor.lerTexto("Placa do veículo: ");
+        if (!placaValida(placa)) {
+            System.out.println("Placa inválida. A placa deve ter exatamente 7 caracteres alfanuméricos, sem espaços ou caracteres especiais.");
+            return;
+        }
+
         String modelo = leitor.lerTexto("Modelo do veículo: ");
+        if (modelo.trim().isEmpty()) {
+            System.out.println("Modelo inválido. O modelo não pode ficar em branco.");
+            return;
+        }
+
         TipoVeiculo tipo = escolherTipoVeiculo(leitor);
 
         if (tipo == null) {
@@ -81,13 +102,33 @@ public class Main {
 
     private static void registrarSaida(LeitorConsole leitor, Estacionamento estacionamento) {
         String placa = leitor.lerTexto("Placa do veículo: ");
-        double valor = estacionamento.registrarSaida(placa);
+        if (!placaValida(placa)) {
+            System.out.println("Placa inválida. A placa deve ter exatamente 7 caracteres alfanuméricos.");
+            return;
+        }
+
+        double horasPermanencia = leitor.lerDouble("Quantas horas o veículo ficou estacionado? ");
+        if (horasPermanencia <= 0) {
+            System.out.println("A quantidade de horas deve ser maior que zero.");
+            return;
+        }
+
+        double valor = estacionamento.registrarSaida(placa, horasPermanencia);
 
         if (valor < 0) {
             System.out.println("Nenhum veículo com essa placa foi encontrado no estacionamento.");
         } else {
             System.out.printf("Saída registrada! Valor a pagar: R$ %.2f%n", valor);
         }
+    }
+
+    private static boolean placaValida(String placa) {
+        if (placa == null) {
+            return false;
+        }
+
+        String placaNormalizada = placa.trim().replaceAll("\\s+", "").toUpperCase();
+        return !placaNormalizada.isEmpty() && placaNormalizada.length() == 7 && placaNormalizada.matches("[A-Z0-9]+");
     }
 
     private static TipoVeiculo escolherTipoVeiculo(LeitorConsole leitor) {
