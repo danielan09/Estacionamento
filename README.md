@@ -24,6 +24,26 @@ Este projeto simula um sistema de estacionamento com cadastro de vagas, entrada 
 - Validação de placa, campos vazios e limite máximo de vagas
 - Menu interativo no console
 
+## Regras de Negócio:
+````text
+Valores Estacionamento
+Tipo de Veículo
+
+Moto
+Valor da 1ª Hora - R$ 5,00
+Valor Hora Adicional - R$ 5,00 X 2
+
+Carro
+Valor da 1ª Hora - R$ 10,00
+Valor Hora Adicional - R$ 10,00 X 3
+
+Caminhonete
+Valor da 1ª Hora - R$ 15,00
+Valor Hora Adicional - R$ 15,00 X 5
+
+Clientes que permanecerem no estacionamento por 8 horas ou mais têm direito a um desconto de 10% sobre o valor total da cobrança. 
+````
+
 
 ## Estrutura do Projeto
 ````text
