@@ -3,8 +3,8 @@ package senac.estacionamento.modules;
 
 public enum TipoVeiculo {
 
-    CARRO("Moto", 5.00, 2.00),
-    MOTO("Carro", 10.00, 3.00),
+    MOTO("Moto", 5.00, 2.00),
+    CARRO("Carro", 10.00, 3.00),
     CAMINHONETE("Caminhonete", 15.00, 5.00);
 
     private final String descricao;

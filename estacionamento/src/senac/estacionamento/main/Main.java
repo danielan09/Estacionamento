@@ -116,9 +116,7 @@ public class Main {
         double valor = estacionamento.registrarSaida(placa, horasPermanencia);
 
         if (valor < 0) {
-            System.out.println("Nenhum veículo com essa placa foi encontrado no estacionamento.");
-        } else {
-            System.out.printf("Saída registrada! Valor a pagar: R$ %.2f%n", valor);
+            System.out.println("❌ Nenhum veículo com essa placa foi encontrado no estacionamento.");
         }
     }
 
@@ -134,9 +132,8 @@ public class Main {
     private static TipoVeiculo escolherTipoVeiculo(LeitorConsole leitor) {
         System.out.println("Tipo do veículo:");
         TipoVeiculo[] tipos = TipoVeiculo.values();
-        for (int i = 0; i < tipos.length; i++) {
-            System.out.println((i + 1) + " - " + tipos[i].getDescricao());
-        }
+        java.util.stream.IntStream.rangeClosed(1, tipos.length)
+                .forEach(i -> System.out.println(i + " - " + tipos[i - 1].getDescricao()));
 
         int opcao = leitor.lerInteiro("Opção: ");
 

@@ -67,30 +67,6 @@ public class Estacionamento {
         return vagaLivre;
     }
 
-    public double registrarSaida(String placa) {
-        Optional<Vaga> vagaOcupada = vagas.stream()
-                .filter(Vaga::isOcupada)
-                .filter(v -> v.getVeiculoAtual() != null && v.getVeiculoAtual().getPlaca().equalsIgnoreCase(placa))
-                .findFirst();
-
-        if (vagaOcupada.isEmpty()) {
-            return -1;
-        }
-
-        Vaga vaga = vagaOcupada.get();
-        Veiculo veiculo = vaga.getVeiculoAtual();
-        veiculo.registrarSaida();
-
-        double valor = veiculo.getTipo().calcularValor(veiculo.getMinutosPermanencia());
-        if (veiculo.getMinutosPermanencia() > 8 * 60L) {
-            valor *= 0.90;
-        }
-
-        vaga.liberar();
-
-        return Math.round(valor * 100.0) / 100.0;
-    }
-
     public double registrarSaida(String placa, double horasPermanencia) {
         if (horasPermanencia <= 0) {
             return -1;
@@ -110,14 +86,37 @@ public class Estacionamento {
         long minutosPermanencia = Math.round(horasPermanencia * 60);
 
         double valor = veiculo.getTipo().calcularValor(minutosPermanencia);
+        double valorComDesconto = valor;
+        
         if (horasPermanencia > 8) {
-            valor *= 0.90;
+            valorComDesconto = valor * 0.90;
         }
 
         veiculo.registrarSaida();
         vaga.liberar();
 
-        return Math.round(valor * 100.0) / 100.0;
+        System.out.println("\n========================================");
+        System.out.println("     RECIBO DE SAÍDA - ESTACIONAMENTO");
+        System.out.println("========================================");
+        System.out.println("Placa do Veículo: " + veiculo.getPlaca());
+        System.out.println("Modelo: " + veiculo.getModelo());
+        System.out.println("Tipo: " + veiculo.getTipo().getDescricao());
+        System.out.println("Permanência: " + horasPermanencia + " horas");
+        System.out.println("----------------------------------------");
+        System.out.println("Valor Inicial: R$ " + String.format("%.2f", valor));
+        
+        if (horasPermanencia > 8) {
+            System.out.println("DESCONTO de 10% (permanência > 8h)");
+            System.out.println("Desconto: -R$ " + String.format("%.2f", valor - valorComDesconto));
+        } else {
+            System.out.println("Nenhum desconto aplicável");
+        }
+        
+        System.out.println("----------------------------------------");
+        System.out.println("VALOR FINAL: R$ " + String.format("%.2f", valorComDesconto));
+        System.out.println("========================================\n");
+
+        return Math.round(valorComDesconto * 100.0) / 100.0;
     }
 
     public String getNome() {
@@ -141,7 +140,7 @@ public class Estacionamento {
     }
 
     public void exibirInformacoesGerais() {
-        System.out.println("========================================");
+        System.out.println("\n========================================");
         System.out.println(" ESTACIONAMENTO: " + nome);
         System.out.println(" Endereço: " + endereco);
         System.out.println("----------------------------------------");
@@ -149,11 +148,15 @@ public class Estacionamento {
         System.out.println(" Vagas Ocupadas....... " + getTotalVagasOcupadas());
         System.out.println(" Vagas Livres........... " + getTotalVagasLivres());
         System.out.println("----------------------------------------");
-        System.out.println(" Tabelas de Preços:");
+        System.out.println(" TABELA DE PREÇOS:");
+        System.out.println("----------------------------------------");
         java.util.Arrays.stream(TipoVeiculo.values()).forEach(tipo ->
-                System.out.printf(" %-12s 1a hora: R$ %.2f | hora adicional: R$ %.2f%n",
+                System.out.printf(" %-15s | 1ª hora: R$ %6.2f | hora adic: X %6.2f%n",
                         tipo.getDescricao(), tipo.getValorPrimeiraHora(), tipo.getValorHoraAdicional()));
-        System.out.println("========================================");
+        System.out.println("----------------------------------------");
+        System.out.println(" Primeiros 20 minutos: GRATUITO");
+        System.out.println(" Permanência > 8 horas: DESCONTO 10%");
+        System.out.println("========================================\n");
     }
 
     public void listarVagas() {
